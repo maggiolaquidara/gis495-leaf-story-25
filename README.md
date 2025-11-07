@@ -8,7 +8,7 @@ Supports images, audio and video embeddings, and Leaflet TileLayer/geojson overl
 
 
 ## Live links (replace with your own)
-- Leaflet Map https://rlwcomposto.github.io/nr491-leaflet-storymap-25/
+- Leaflet Map https://rlwcomposto.github.io/nr491-leaflet-storymap-25/](https://maggiolaquidara.github.io/gis495-leaf-story-25/
 
 ## Create Your Own
 - Follow instructions in storymap.ipynb
@@ -33,3 +33,4 @@ We use [Google Sheets API version 4](https://developers.google.com/sheets/api), 
 - jQuery-CSV (v1.0.11) https://github.com/evanplaice/jquery-csv (MIT)
 - Single Element CSS Spinner (31 May 2016) https://github.com/lukehaas/css-loaders (MIT)
 - Lightbox by Lokesh Dhakar (v.2.11.3) https://github.com/lokesh/lightbox2 (MIT)
+

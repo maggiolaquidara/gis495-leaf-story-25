@@ -6,7 +6,7 @@ html, body {
     margin: 0;
     padding: 0;
     font-family: "Helvetica", sans-serif;
-    overflow: hidden; /* prevent full-page scroll */
+    /* overflow: hidden;  <-- remove this line */
 }
 
 /* ==========================

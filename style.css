@@ -15,29 +15,28 @@ html, body {
 #container {
     display: flex;
     height: 100vh; /* full viewport height */
-    width: 100%;
+    overflow: hidden; /* prevent page scroll, allow internal scroll */
 }
 
 /* ==========================
    LEFT COLUMN (IMAGES / MAP)
 ========================== */
 #left {
-    flex: 0 0 50%; /* adjust width as needed */
-    overflow-y: scroll;
+    width: 50%; /* adjust as needed */
+    overflow-y: auto; /* scroll images if needed */
     padding: 10px;
     box-sizing: border-box;
-    background-color: #f0f0f0; /* optional contrast */
+   position: sticky;
 }
 
 /* ==========================
    RIGHT COLUMN (STORY / TEXT)
 ========================== */
 #right {
-    flex: 0 0 50%; /* adjust width as needed */
-    overflow-y: scroll;
+    width: 50%; /* adjust as needed */
+    overflow-y: auto; /* scroll text */
     padding: 20px;
     box-sizing: border-box;
-    background-color: #fff;
 }
 
 /* ==========================

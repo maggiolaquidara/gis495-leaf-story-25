@@ -1,180 +1,162 @@
+/* Reset and body setup */
 html, body {
-  height: 100%;
-  margin: 0;
-  font-family: "Helvetica", sans-serif;
-  overflow: hidden; 
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: "Helvetica", sans-serif;
+    overflow: hidden; /* prevents full-page scroll, story panel scrolls instead */
 }
 
+/* MAP STYLING */
 #map {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 70%;
-  height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 70%;       /* map occupies 70% of screen width */
+    height: 100%;
+    border-bottom: 3px solid orange;
 }
 
+/* STORY PANEL STYLING */
 #story {
     position: absolute;
-  top: 0;
-  right: 0;
-  width: 30%;
-  height: 100%;
-  overflow-y: scroll; /* scrollable text */
-  padding: 20px;
-  box-sizing: border-box;
-  background-color: #fff; /* optional for contrast */
+    top: 0;
+    right: 0;
+    width: 30%;       /* story panel occupies 30% of screen width */
+    height: 100%;
+    overflow-y: scroll; /* allows vertical scrolling inside story */
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #fff; /* optional for contrast against map */
 }
 
-#narration {
-  position: absolute;
-  top: 203px;
-  width: 100vw;
-  height: calc(100vh - 203px);
-  z-index: 80;
+/* SCROLLBAR STYLING (optional) */
+#story::-webkit-scrollbar {
+    width: 8px;
+}
+#story::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 4px;
 }
 
-#contents {
-  padding: 0;
-  width: 100%;
-  margin-top: 0; /*Adjust if Title header needs more space */
-  height: 100%; /* Adjust to fit max Description length, one setting for all; alternative is 100% */
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
-
-#top {
-  height: 40px;
-  margin: 0;
-}
-
-#space-at-the-bottom {
-  height: 200px;
-  margin: 0;
-  text-align: center;
-  padding-top: 150px;
-}
-
-#title {
-  position: absolute;
-  left: 0;
-  top: 203px;
-  background-color: white;
-  width: 100vw;
-  z-index: 100;
-  margin: 0;
-  padding: 0;
-  visibility: hidden;
-  font-weight: bold;
-  text-align: center;
-}
-
+/* CHAPTER CONTAINERS */
 .chapter-container {
-  /* margin + padding = chapterContainerMargin in script.js */
-  /* Important for scrolling! */
-  margin: 50px 0 0 0;
-  padding: 20px 0 0 0;
-  text-align: center;
+    margin: 40px 0;
+    padding: 0;
+    text-align: center;
 }
 
-.chapter-container img {
- display: block;
-  margin: 10px auto;
-  max-width: 100%;
-  height: auto;
-}
-
-.img-container {
-  margin: 0;
-  margin-bottom: 5px;
-  height: 200px;
-  max-height: 200px;
-  width: 100%;
-}
-
-.audio-container {
-  margin: 0;
-  margin-bottom: 5px;
-  height: 60px;
-  max-height: 60px;
-  width: 100%;
-}
-
-.chapter-header {
-  display: block;
-  text-align: center;
-  font-size: 1.2em;
-  padding: 0 5px;
-}
-
-.source {
-  font-size: 9pt;
-  font-style: italic;
-  color: gray;
-}
-a.source:visited {
-  color: grey;
-}
-
-.description {
-  margin: 20px;
-  text-align: left;
-  font-size: 11pt;
-  padding: 20px;
-}
-
-.in-focus {
-  opacity: 1.0;
-}
-
-.out-focus {
-  opacity: 0.3;
-}
-
-.leaflet-control-attribution {
-  visibility: hidden;
-}
-
-.leaflet-marker-icon {
-  opacity: 0.75;
-}
-
-/*
-  By default, current (active) marker is orange.
-  If you want to change the color, see options here: https://github.com/coryasilva/Leaflet.ExtraMarkers/blob/master/src/assets/css/leaflet.extra-markers.css
-*/
-.marker-active {
-  background-position: -72px 0 !important;
-}
-
-/* Storymap logo image above the title */
-#logo {
-  height: 30px;
-  line-height: 30px;
-  text-align: center;
-  padding: 10px;
-  max-width: 100%;
-}
-
-#logo img {
-  max-height: 100%;
-  max-width: 100%;
-  vertical-align: middle;
-}
-
-#header {
-  padding: 5px 0;
-  text-align: center;
-  color: #333;
-}
-
-/* Storymap title & subtitle */
+/* CHAPTER HEADERS */
 h1 {
-  margin: 0;
-  font-size: 1.5em;
+    font-size: 1.5em;
+    margin-bottom: 10px;
 }
 
 h2 {
-  margin: 0;
-  font-size: 1.1em;
-  font-weight: normal;
+    font-size: 1.2em;
+    margin: 20px 0 10px 0;
+    font-weight: normal;
+    text-align: center;
 }
+
+h3 {
+    font-size: 1em;
+    margin: 10px 0;
+}
+
+/* PARAGRAPHS */
+p {
+    font-size: 11pt;
+    line-height: 1.5em;
+    margin: 10px 0;
+    text-align: left;
+}
+
+/* LISTS */
+ul {
+    margin: 10px 20px;
+    padding-left: 20px;
+}
+
+li {
+    margin-bottom: 5px;
+    font-size: 11pt;
+}
+
+/* IMAGES */
+.chapter-container img {
+    display: block;
+    margin: 10px auto;
+    max-width: 100%;
+    height: auto;
+}
+
+/* OPTIONAL IMAGE CONTAINER for fixed height */
+.img-container {
+    width: 100%;
+    height: auto;
+    margin: 10px 0;
+}
+
+/* AUDIO (if needed) */
+.audio-container {
+    width: 100%;
+    height: 60px;
+    margin-bottom: 10px;
+}
+
+/* TEXT STYLING FOR SOURCES OR CAPTIONS */
+.source {
+    font-size: 9pt;
+    font-style: italic;
+    color: gray;
+}
+
+a.source:visited {
+    color: grey;
+}
+
+/* VISUAL EFFECTS FOR FOCUSING TEXT (optional for JS interactions) */
+.in-focus {
+    opacity: 1.0;
+}
+
+.out-focus {
+    opacity: 0.3;
+}
+
+/* LEAFLET STYLING */
+.leaflet-control-attribution {
+    visibility: hidden;
+}
+
+.leaflet-marker-icon {
+    opacity: 0.75;
+}
+
+/* Active marker styling (orange by default) */
+.marker-active {
+    background-position: -72px 0 !important;
+}
+
+/* STORYMAP LOGO (optional) */
+#logo {
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    padding: 10px;
+}
+
+#logo img {
+    max-height: 100%;
+    max-width: 100%;
+    vertical-align: middle;
+}
+
+/* HEADER */
+#header {
+    padding: 5px 0;
+    text-align: center;
+    color: #333;
+}
+

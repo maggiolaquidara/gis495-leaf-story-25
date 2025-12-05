@@ -14,8 +14,144 @@
 
 <div id="map"></div>
 <div id="story">
-    <h1>My Leaflet StoryMap</h1>
-    <p>Scroll to explore...</p>
+    <div id="story">
+
+    <h1>Deforestation & Water Shortages in Sicily (2010–2025)</h1>
+
+    <h2>Chapter 1 — Why Look at Sicily?</h2>
+    <p>
+        Sicily is the largest island in the Mediterranean, known for its mountains, coastline, 
+        and hot, dry summers. Over the last decade, however, the island has struggled with 
+        severe water shortages. Cities have declared states of emergency, farms have suffered, 
+        and much of the island’s limited water supply has been stretched to the limit.
+    </p>
+    <p>
+        At the same time, Sicily has a long history of forest loss. Much of its original forest 
+        cover disappeared centuries ago, leaving scattered patches of woodland mainly in 
+        mountainous areas. This raised an important question for my project:
+        <strong>Did forest loss contribute to the worsening water shortages between 2010 and 2025?</strong>
+    </p>
+    <p>
+        To explore this, I examined forest cover, vegetation health, drought intensity, 
+        and climate conditions over a 15-year period.
+    </p>
+
+    <h2>Chapter 2 — What the Forest Data Shows (2012–2018)</h2>
+    <p>
+        The first step was to examine forest cover using official maps from 2012 and 2018. 
+        Surprisingly, the results showed almost <strong>no change</strong>. Only about 
+        1% of forest cover shifted during that time period.
+    </p>
+    <p>
+        The maps looked nearly identical, suggesting that recent forest loss is minimal. 
+        Based on this, forest cover alone was unlikely to explain Sicily’s growing water crisis.
+    </p>
+
+    <h2>Chapter 3 — Vegetation Tells a Different Story (2010–2025)</h2>
+    <p>
+        Since forests had barely changed, I turned to vegetation more broadly. Using satellite
+        imagery, I analyzed NDVI—a measure of how green and healthy vegetation is.
+    </p>
+    <p>
+        Here, the patterns were much clearer. Between 2010 and 2025, vegetation across Sicily 
+        shifted noticeably. Some areas greened; others dried out or showed signs of stress.
+    </p>
+    <p>
+        Older satellite images from 2010 contained gaps and imperfections (a known issue with 
+        early Landsat sensors), but even with these challenges, the overall trend suggested real 
+        landscape change. Vegetation, unlike forest cover, appeared to be much more dynamic—and 
+        possibly connected to drought conditions.
+    </p>
+
+    <h2>Chapter 4 — What Drought Conditions Look Like in 2025</h2>
+    <p>
+        Next, I mapped drought intensity in 2025 using European Drought Observatory data. 
+        The resulting map showed a mosaic of conditions:
+    </p>
+    <ul>
+        <li><strong>Orange/yellow</strong> — areas with severe or moderate drought</li>
+        <li><strong>Green</strong> — areas that were recovering</li>
+        <li><strong>Grey</strong> — areas with no drought reports</li>
+    </ul>
+    <p>
+        These patterns provided a clear look at how widespread and serious water shortages were 
+        across Sicily in 2025.
+    </p>
+
+    <h2>Chapter 5 — Climate Patterns (2025)</h2>
+    <p>
+        To understand the broader context, I also looked at climate variables from 2025: 
+        air temperature, total rainfall, and evaporation. These datasets were coarse in 
+        resolution, but they still revealed important trends.
+    </p>
+    <p>
+        Sicily in 2025 was <strong>hotter, drier, and losing more moisture through evaporation</strong>. 
+        These climate stresses align with reports of record droughts across the island in recent years.
+    </p>
+
+    <h2>Chapter 6 — So, What’s Connected to What?</h2>
+    <p>
+        After comparing forest cover, vegetation change, and climate conditions with drought 
+        intensity, the patterns became clearer:
+    </p>
+    <p>
+        <strong>Forest cover did not show a meaningful relationship with drought intensity.</strong> 
+        This matched the earlier finding that forest cover barely changed during the study period.
+    </p>
+    <p>
+        <strong>Vegetation health (NDVI) showed a stronger connection.</strong> Areas that 
+        saw declines in vegetation were more likely to experience higher drought intensity.
+    </p>
+    <p>
+        Climate variables were strongly related to one another—unsurprising, since they are all 
+        influenced by the same atmospheric conditions.
+    </p>
+    <p>
+        Taken together, the results suggest that <strong>Sicily’s drought patterns are more strongly 
+        tied to vegetation stress and climate forces than to recent forest loss.</strong>
+    </p>
+
+    <h2>Chapter 7 — What This Means for Sicily</h2>
+    <p>
+        Overall, this project indicates that forest loss was not a major driver of water shortages 
+        between 2010 and 2025. Instead, changes in vegetation and increasingly challenging 
+        climate conditions played a much larger role.
+    </p>
+    <p>
+        This makes sense historically: much of Sicily’s forest loss happened long ago. Today, 
+        water scarcity is shaped by extreme heat, reduced rainfall, and increasing evaporation— 
+        all intensified by climate change.
+    </p>
+
+    <h2>Chapter 8 — What Could Be Improved Next Time?</h2>
+    <p>
+        Like any project, this one had limitations. Different datasets covered different years, 
+        early satellite images had quality issues, and some climate layers had very coarse 
+        resolution. NDVI layers also came from satellites with different spatial resolutions.
+    </p>
+    <p>
+        In the future, this study could be improved by:
+    </p>
+    <ul>
+        <li>Using better-aligned datasets across time</li>
+        <li>Adding hydrological modeling (like analyzing flow direction or watersheds)</li>
+        <li>Using finer resolution satellite data</li>
+        <li>Incorporating time-series analysis for a more dynamic view</li>
+    </ul>
+
+    <h2>Final Thoughts</h2>
+    <p>
+        This project was an opportunity to apply geospatial analysis to a real-world problem 
+        affecting my home region. Although forest loss was not a major factor in recent water 
+        shortages, the findings highlight something equally important:
+    </p>
+    <p>
+        <strong>Sicily’s water crisis is deeply connected to climate stress and changes in its 
+        vegetation—and understanding those patterns is key to protecting the island’s future.</strong>
+    </p>
+
+</div>
+
 </div>
 
 <!-- Leaflet JS -->
@@ -26,6 +162,7 @@
 
 </body>
 </html>
+
 
 
 

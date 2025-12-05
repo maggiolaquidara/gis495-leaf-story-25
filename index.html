@@ -1,73 +1,361 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
 
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
-  <link rel="icon" type="image/png" href="./favicon.png">
-  <title>Leaflet Storymaps with Google Sheets Template</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Investigating Deforestation & Water Shortages — Sicily StoryMap</title>
 
-  <!-- Load Leaflet CSS and JS-->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  <!-- Leaflet -->
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha512-sA+e2b0m3sK6n0XrM+5JQ1s2wFf9M9o0xHqQ5d2Wn9q6p3sPdJ+uQf6Zr1Y3Bv0q1gGg6PqV3wq7p3k3l0l3Qg=="
     crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha512-0Zf4Vb4H7Qb+g2JZ6z9K3x6n2sXq5g2s7G1s2f4X1w3v6z1nq4o2t1m3K0p8q7e9J8k2s1v3m3z2q1g=="
     crossorigin=""></script>
 
-  <!-- Load Leaflet basemap providers -->
-  <script src="https://unpkg.com/leaflet-providers@1.10.2/leaflet-providers.js"></script>
+  <!-- Optional: Leaflet Hash for deep linking to views (tiny helper) -->
 
-  <!-- Load jQuery  -->
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+  <script src="https://unpkg.com/leaflet-hash@0.2.1/leaflet-hash.min.js"></script>
 
-  <!-- Load PapaParse -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
+  <!-- Optional: GeoTIFF support -->
 
-  <!-- Load Lightbox -->
-  <script src="scripts/lightbox/js/lightbox.js"></script>
-  <link rel="stylesheet" href="scripts/lightbox/css/lightbox.css" />
+  <!-- If you plan to show GeoTIFFs directly, include leaflet-geotiff and dependencies -->
 
-  <!-- Load Font-Awesome -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-  <link rel="stylesheet" href="markers/leaflet.extra-markers.min.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/style-desktop.css">
-  <link rel="stylesheet" href="css/loader.css">
+  <script src="https://unpkg.com/geotiff/dist/geotiff.browser.min.js"></script>
+
+  <script src="https://unpkg.com/leaflet-geotiff/leaflet-geotiff.min.js"></script>
+
+  <style>
+    :root{
+      --sidebar-width: 420px;
+      --accent: #2b6cb0;
+      --muted: #666;
+    }
+    html,body,#map { height:100%; margin:0; padding:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    .layout { display:flex; height:100vh; }
+    .sidebar {
+      width:var(--sidebar-width);
+      min-width:300px;
+      max-width:48%;
+      box-sizing:border-box;
+      padding:28px;
+      overflow:auto;
+      background:linear-gradient(180deg,#fff,#f7fbff);
+      border-right:1px solid #e6eef8;
+    }
+    .map-wrap { flex:1; position:relative; }
+    #map { position:absolute; inset:0; }
+    h1{ margin:0 0 8px 0; font-size:20px; color:var(--accent); }
+    h2{ margin:12px 0 6px 0; font-size:16px; }
+    p, ul { color:#222; line-height:1.45; }
+    .slide {
+      margin-bottom:22px;
+      padding-bottom:6px;
+      border-bottom:1px dashed #eee;
+    }
+    .controls { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
+    .btn {
+      background:var(--accent); color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;
+      box-shadow:0 1px 0 rgba(0,0,0,0.06);
+    }
+    .btn.secondary { background:#efefef; color:#222; }
+    .muted { color:var(--muted); font-size:13px; }
+    .legend { background:rgba(255,255,255,0.9); padding:8px; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.08); position:absolute; right:12px; bottom:12px; font-size:13px; }
+    .image-placeholder { width:100%; height:160px; background:#f2f6fb; border:1px dashed #d6e6fb; display:flex; align-items:center; justify-content:center; color:#9fb0d8; margin:8px 0; border-radius:6px; }
+    footer { padding:12px 28px; font-size:13px; color:var(--muted); border-top:1px solid #f0f4f8; background:#fff; }
+    @media (max-width:900px){
+      .layout{ flex-direction:column; }
+      .sidebar { width:100%; max-height:45vh; border-right:none; border-bottom:1px solid #e6eef8; }
+      .map-wrap{ height:55vh; }
+    }
+  </style>
+
 </head>
-
 <body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Investigating Deforestation & Water Shortages — Sicily (2010–2025)</h1>
+      <p class="muted">StoryMap authored by <strong>Maggio Laquidara</strong> — GIS595, Fall 2025</p>
 
-  <div id="title">
-    <div id="logo"></div>
-    <div id="header"></div>
+```
+  <!-- Slide container: each slide corresponds to a map state -->
+  <div id="slides">
+
+    <section class="slide" data-slide="intro">
+      <h2>Introduction: A Landscape Under Stress</h2>
+      <p><strong>Question:</strong> Did forest cover loss contribute to water shortage events recorded in Sicily between 2010 and 2025?</p>
+      <p>This StoryMap integrates landcover, NDVI, drought classifications, and climate variables (ERA5) across 2010–2025 using maps, satellite imagery, and statistical analysis to explore the relationship between vegetation change and drought severity.</p>
+      <div class="image-placeholder">[Map / Intro image]</div>
+      <div class="controls">
+        <button class="btn" data-goto="intro">View on map</button>
+        <button class="btn secondary" data-next="context">Next: Ecological context</button>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="context">
+      <h2>Sicily's Ecological Context</h2>
+      <ul>
+        <li>Forests: Downy oak, Sessile oak, Turkey oak; mosaic with shrublands & pastures.</li>
+        <li>Dry season: August–November. Annual precipitation ~600–650 mm (winter-biased).</li>
+        <li>Long history of exploitation; recent droughts documented by EDO.</li>
+      </ul>
+      <div class="image-placeholder">[Ecological map / species distribution]</div>
+      <div class="controls">
+        <button class="btn" data-goto="context">View on map</button>
+        <button class="btn secondary" data-next="data">Next: Data sources</button>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="data">
+      <h2>Data Sources</h2>
+      <p>Integrated datasets:</p>
+      <ul>
+        <li><strong>CORINE Land Cover (2012 & 2018)</strong> — 100 m; forest classes 311–313.</li>
+        <li><strong>European Drought Observatory (EDO)</strong> — 0.25° classified rasters (8 categories).</li>
+        <li><strong>ERA5</strong> — temperature, precipitation, evaporation from grib files.</li>
+        <li><strong>GEE NDVI (2010 & 2025)</strong> — Landsat 8 (2010, 30 m) & Sentinel-2 (2025, 10 m).</li>
+      </ul>
+      <div class="image-placeholder">[Dataset thumbnails]</div>
+      <div class="controls">
+        <button class="btn" data-goto="data">View layers</button>
+        <button class="btn secondary" data-next="processing">Next: Processing</button>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="processing">
+      <h2>Processing the Data</h2>
+      <p>Workflow spanned QGIS, Google Earth Engine (GEE), and Python (VS Code / Jupyter):</p>
+      <ul>
+        <li><strong>QGIS:</strong> reprojection to EPSG:32633, rasterization of CORINE, binary forest masks, resampling & masking.</li>
+        <li><strong>GEE:</strong> NDVI composites exported in EPSG:32633.</li>
+        <li><strong>Python:</strong> resample to master grid, correlation matrices, OLS regression models (vegetation-only & interactions).</li>
+      </ul>
+      <div class="controls">
+        <button class="btn" data-goto="processing">View processing layers</button>
+        <button class="btn secondary" data-next="forestmaps">Next: Forest maps</button>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="forestmaps">
+      <h2>Mapping Sicily's Forests (2012 → 2018)</h2>
+      <p>CORINE-based forest change shows <strong>less than 1% change</strong> between 2012 and 2018 at 100 m resolution.</p>
+      <div class="image-placeholder">[Forest 2012 / 2018 comparison maps]</div>
+      <p class="muted">Interpretation: remaining forests may be relatively stable; subtle changes may be below CORINE's detection threshold.</p>
+      <div class="controls">
+        <button class="btn" data-goto="forestmaps">View forest layers</button>
+        <button class="btn secondary" data-next="ndvi">Next: NDVI change</button>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="ndvi">
+      <h2>Vegetation Change (NDVI): 2010 vs 2025</h2>
+      <p>NDVI reveals island-wide shifts—reductions in central mountains and southern arid zones; local increases where irrigation is present.</p>
+      <div class="image-placeholder">[NDVI 2010 | NDVI 2025]</div>
+      <div class="controls">
+        <button class="btn" data-goto="ndvi">View NDVI layers</button>
+        <button class="btn secondary" data-next="drought">Next: Drought & climate</button>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="drought">
+      <h2>Drought & Climate Layers</h2>
+      <ul>
+        <li>EDO drought severity (2025)</li>
+        <li>ERA5 temperature, precipitation, evaporation (2025)</li>
+      </ul>
+      <p class="muted">High drought severity generally aligns with high temp, high evaporation, and low precipitation.</p>
+      <div class="image-placeholder">[EDO / ERA5 maps]</div>
+      <div class="controls">
+        <button class="btn" data-goto="drought">Toggle drought/climate</button>
+        <button class="btn secondary" data-next="stats">Next: Statistical results</button>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="stats">
+      <h2>Statistical Results</h2>
+      <p><strong>Model 1 (Vegetation-only):</strong> forest change & NDVI change — no significant relationship with drought severity.</p>
+      <p><strong>Model 2 (Vegetation + Climate):</strong> temperature & evaporation strong predictors; NDVI interacts moderately; forest change remains insignificant.</p>
+      <div class="image-placeholder">[Regression summary / plots]</div>
+      <div class="controls">
+        <button class="btn" data-goto="stats">View model results</button>
+        <button class="btn secondary" data-next="conclusion">Next: Conclusions</button>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="conclusion">
+      <h2>Conclusions & Implications</h2>
+      <ul>
+        <li>Forest cover largely stable (2012–2018).</li>
+        <li>NDVI shows meaningful vegetation decline in places; climate extremes drive water shortages.</li>
+        <li>Vegetation loss may exacerbate drought vulnerability regionally.</li>
+      </ul>
+      <p class="muted">Management implications: prioritize climate adaptation, high-resolution vegetation monitoring, restoration of degraded lands, and integrated drought-vegetation modeling.</p>
+      <div class="controls">
+        <button class="btn" data-goto="conclusion">View summary maps</button>
+        <button class="btn secondary" id="resetView">Reset map</button>
+      </div>
+    </section>
+
   </div>
 
-  <div id="narration">
-    <div id="contents">
-      <div id="top"></div>
-    </div>
-  </div>
+  <footer>
+    <div>Author: Maggio Laquidara — GIS595, Fall 2025</div>
+    <div class="muted">Tip: Replace placeholder tile/GeoJSON URLs in the script with paths to your repository files or a tileserver.</div>
+  </footer>
+</aside>
 
-  <div class="loader">Loading...</div>
+<div class="map-wrap">
   <div id="map"></div>
 
-  <script type="text/javascript">
-    // Create the Leaflet map with a generic start point
-    var map = L.map('map', {
-      center: [0, 0],
-      zoom: 1,
-      scrollWheelZoom: false,
-      zoomControl: false,
-      tap: false
-    });
-  </script>
+  <div class="legend" id="leg">
+    <strong>Layers</strong>
+    <div>
+      <label><input type="checkbox" id="lyr_corine" checked> CORINE (forest)</label><br>
+      <label><input type="checkbox" id="lyr_ndvi" checked> NDVI (2010/2025)</label><br>
+      <label><input type="checkbox" id="lyr_edo" checked> EDO drought</label><br>
+      <label><input type="checkbox" id="lyr_era5" checked> ERA5 climate</label>
+    </div>
+  </div>
+</div>
+```
 
-  <script type="text/javascript" src="google-doc-url.js"></script>
-  <script type="text/javascript" src="markers/leaflet.extra-markers.min.js"></script>
-  <script type="text/javascript" src="scripts/constants.js"></script>
-  <script type="text/javascript" src="scripts/jquery.csv.js"></script>
-  <script type="text/javascript" src="scripts/storymap.js"></script>
+  </div>
+
+  <script>
+    // Basic Leaflet map setup
+    const map = L.map('map', { zoomControl:true }).setView([37.6, 14.0], 8); // Sicily center
+
+    // Base layer (OpenStreetMap)
+    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Placeholder layer groups -- replace 'data/...' with your repo paths or tile server
+    const corineLayer = L.layerGroup().addTo(map);
+    const ndviLayer = L.layerGroup().addTo(map);
+    const edoLayer = L.layerGroup().addTo(map);
+    const era5Layer = L.layerGroup().addTo(map);
+
+    // Example: load CORINE forest polygons (GeoJSON)
+    // Put a CORINE GeoJSON in your repo at `data/corine_forest_2018.geojson`
+    fetch('data/corine_forest_2018.geojson').then(r => {
+      if (!r.ok) throw new Error('CORINE GeoJSON not found');
+      return r.json();
+    }).then(json => {
+      const style = { color:'#145a32', weight:1, fillOpacity:0.4 };
+      L.geoJSON(json, { style }).addTo(corineLayer);
+    }).catch(e => {
+      // graceful fallback: console and a visual note marker
+      console.warn(e);
+    });
+
+    // Example: add NDVI raster via leaflet-geotiff (if you exported to tiles or GeoTIFF)
+    // Option A: If you have an XYZ tile server (recommended for GitHub Pages large rasters), use:
+    // const ndviTiles = L.tileLayer('https://your-tileserver/ndvi/{z}/{x}/{y}.png', { opacity:0.7 });
+    // ndviTiles.addTo(ndviLayer);
+
+    // Option B: If you have GeoTIFF files in repo and want to load with leaflet-geotiff (small files only)
+    // const ndviTiff = L.leafletGeotiff('data/ndvi_2025.tif', { band:0, name:'NDVI 2025' });
+    // ndviTiff.addTo(ndviLayer);
+
+    // Example EDO: load a simplified raster as a colored XYZ tiles or GeoJSON polygons
+    // For demonstration we create a dummy circle layer (replace with real data)
+    const edoExample = L.circle([37.5,14.0], { radius: 25000, color:'#c0392b', fillOpacity:0.2 }).addTo(edoLayer);
+
+    // ERA5 climate layer placeholder (point heat)
+    const era5Example = L.circle([37.9, 14.0], { radius: 20000, color:'#d35400', fillOpacity:0.15 }).addTo(era5Layer);
+
+    // Wire up legend checkboxes
+    document.getElementById('lyr_corine').addEventListener('change', e => {
+      e.target.checked ? map.addLayer(corineLayer) : map.removeLayer(corineLayer);
+    });
+    document.getElementById('lyr_ndvi').addEventListener('change', e => {
+      e.target.checked ? map.addLayer(ndviLayer) : map.removeLayer(ndviLayer);
+    });
+    document.getElementById('lyr_edo').addEventListener('change', e => {
+      e.target.checked ? map.addLayer(edoLayer) : map.removeLayer(edoLayer);
+    });
+    document.getElementById('lyr_era5').addEventListener('change', e => {
+      e.target.checked ? map.addLayer(era5Layer) : map.removeLayer(era5Layer);
+    });
+
+    // Story slides array (mirrors the HTML slides; controls map view & layer visibility)
+    const slides = [
+      { id:'intro', center:[37.6, 14.0], zoom:8, show:[ 'corine','ndvi' ] },
+      { id:'context', center:[37.6,14.5], zoom:8.2, show:[ 'corine' ] },
+      { id:'data', center:[37.6,14.0], zoom:7.7, show:[ 'edo','era5' ] },
+      { id:'processing', center:[37.6,14.0], zoom:8, show:[ 'corine','ndvi' ] },
+      { id:'forestmaps', center:[37.0,14.0], zoom:9, show:[ 'corine' ] },
+      { id:'ndvi', center:[37.25,14.0], zoom:8.6, show:[ 'ndvi' ] },
+      { id:'drought', center:[37.6,14.0], zoom:8.2, show:[ 'edo','era5' ] },
+      { id:'stats', center:[37.6,14.0], zoom:8, show:[ 'ndvi','edo' ] },
+      { id:'conclusion', center:[37.6,14.0], zoom:8, show:[ 'corine','ndvi','edo','era5' ] },
+    ];
+
+    // Helper to set which layer groups are visible per slide
+    function setSlideLayers(showList){
+      const targets = {
+        corine: corineLayer,
+        ndvi: ndviLayer,
+        edo: edoLayer,
+        era5: era5Layer
+      };
+      // set all off first
+      Object.values(targets).forEach(g => map.removeLayer(g));
+      // toggle checkboxes for UI consistency
+      Object.keys(targets).forEach(k => {
+        const checked = showList.includes(k);
+        document.getElementById('lyr_'+k).checked = checked;
+        if (checked) map.addLayer(targets[k]);
+      });
+    }
+
+    // navigation handlers wired to slide buttons in the sidebar
+    document.querySelectorAll('[data-goto]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const id = e.currentTarget.getAttribute('data-goto');
+        gotoSlide(id);
+      });
+    });
+    document.querySelectorAll('[data-next]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const id = e.currentTarget.getAttribute('data-next');
+        gotoSlide(id);
+        // scroll the sidebar to that slide for context
+        const el = document.querySelector(`[data-slide="${id}"]`);
+        if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+      });
+    });
+
+    // Reset view
+    document.getElementById('resetView').addEventListener('click', () => {
+      map.setView([37.6,14.0], 8);
+      setSlideLayers(['corine','ndvi']);
+    });
+
+    // gotoSlide: sets map view & layers based on slides array
+    function gotoSlide(id){
+      const s = slides.find(x=>x.id===id);
+      if (!s) return;
+      map.flyTo(s.center, s.zoom, { duration:1.1 });
+      setSlideLayers(s.show);
+      // Optional: highlight the slide in sidebar
+      document.querySelectorAll('.slide').forEach(el => el.style.boxShadow = '');
+      const el = document.querySelector(`[data-slide="${id}"]`);
+      if (el) el.style.boxShadow = 'inset 0 0 0 3px rgba(43,108,176,0.08)';
+    }
+
+    // Initialize: go to intro slide
+    gotoSlide('intro');
+
+    // Optional: add hash to URL for shareable view
+    const hash = new L.Hash(map);
+
+  </script>
 
 </body>
 </html>
+
+
